@@ -190,6 +190,7 @@
 
     var transitionProperties = ["transition", "-ms-transition", "-moz-transition", "-webkit-transition", "-o-transition"];
     var transformProperties = ["transform", "-ms-transform", "-moz-transform", "-webkit-transform", "-o-transform"];
+    var userSelectProperties = ["user-select", "-ms-user-select", "-moz-user-select", "-webkit-user-select", "-o-user-select"];
 
     //--- YTWP
     var ytwp = uw.ytwp = {
@@ -529,20 +530,22 @@
             // Hide the cinema/wide mode button since it's useless.
             //ytwp.style.appendRule(scriptBodyClassSelector + ' #movie_player .ytp-size-button', 'display', 'none');
 
+            var videoPlayerSelectors = [
+                scriptBodyClassSelector + ' #player',
+                scriptBodyClassSelector + ' #player-api',
+                'html:not(.floater):not(.iri-always-visible) ' + scriptBodyClassSelector + ' #movie_player',
+                scriptBodyClassSelector + ' #player-mole-container',
+                'html:not(.floater):not(.iri-always-visible) ' + scriptBodyClassSelector + ' .html5-video-container',
+                'html:not(.floater):not(.iri-always-visible) ' + scriptBodyClassSelector + ' .html5-main-video',
+            ]
+
             // !important is mainly for simplicity, but is needed to override the !important styling when the Guide is open due to:
             // .sidebar-collapsed #watch7-video, .sidebar-collapsed #watch7-main, .sidebar-collapsed .watch7-playlist { width: 945px!important; }
             // Also, Youtube Center resizes #player at element level.
             // Don't resize if Youtube+'s html.floater is detected.
             // Dont' resize if Youtube+ (Iridium/Material)'s html.iri-always-visible is detected.
             ytwp.style.appendRule(
-                [
-                    scriptBodyClassSelector + ' #player',
-                    scriptBodyClassSelector + ' #player-api',
-                    'html:not(.floater):not(.iri-always-visible) ' + scriptBodyClassSelector + ' #movie_player',
-                    scriptBodyClassSelector + ' #player-mole-container',
-                    'html:not(.floater):not(.iri-always-visible) ' + scriptBodyClassSelector + ' .html5-video-container',
-                    'html:not(.floater):not(.iri-always-visible) ' + scriptBodyClassSelector + ' .html5-main-video',
-                ],
+                videoPlayerSelectors,
                 {
                     'width': '100% !important',
                     'min-width': '100% !important',
@@ -553,7 +556,10 @@
                 }
             );
 
-             ytwp.style.appendRule(
+            d = buildVenderPropertyDict(userSelectProperties, 'none');
+            ytwp.style.appendRule(videoPlayerSelectors, d);
+
+            ytwp.style.appendRule(
                 [
                     scriptBodyClassSelector + ' #player',
                     scriptBodyClassSelector + ' .html5-main-video',
